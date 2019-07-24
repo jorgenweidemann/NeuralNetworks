@@ -67,6 +67,8 @@ Mean square error (mse) is a loss function and it takes the average of the squar
 output and true (wished) output.
 """
 
+scaled_train_samples, train_labels = [], []
+
 model2.fit(scaled_train_samples, train_labels, batch_size=10, epochs=20, shuffle=True, verbose=2)
 """
 batch_size relates to the amount of data sent to the model at once.
@@ -115,7 +117,7 @@ from keras import regularizers
 
 model3 = Sequential([
     Dense(16, input_shape=(1,), activation='relu'),
-    Dense(32, activation='relu', kernel_regulatizer=regularizers.l2(0.01), # Specifies use of the L2 regularizer, and 0.01 as the regularization parameter. A constant that has to be tweeked for the best use.
+    Dense(32, activation='relu', kernel_regulatizer=regularizers.l2(0.01)), # Specifies use of the L2 regularizer, and 0.01 as the regularization parameter. A constant that has to be tweeked for the best use.
     Dense(2, activation='sigmoid')
 ])
 
@@ -151,6 +153,8 @@ When the model is trained it can be used to predict based on test data. The test
 the desired output to the network.
 """
 
+scaled_test_samples = []
+
 predictions = model3.predict(scaled_test_samples, batch_size=10, verbose=0) # Verbose will determine the amount of data from the prediction that is printed to the terminal.
 
 """ Supervised learning
@@ -164,7 +168,7 @@ train_samples = [[150, 67], [130, 60], [200, 65], [125, 52], [230, 72], [181, 70
 # 0: male, 1: female
 train_labels = [1, 1, 0, 1, 0, 0]
 
-model.fit(x=train_samples, y=train_labels, batch_size=3, shuffle=True, verbose=2)
+model3.fit(x=train_samples, y=train_labels, batch_size=3, shuffle=True, verbose=2)
 
 """ Unsupervised learning
 Unsupervised learning is characterized by the training data not having lables. There is therefor no
@@ -210,7 +214,7 @@ Batch normalization is the process of normalizing weights and activationfunction
 the neural network.
 """
 
-from kreas.layers import BatchNormalization
+from keras.layers import BatchNormalization
 
 model4 = Sequential([
     Dense(16, input_shape=(1,), activation='relu'),
@@ -235,9 +239,10 @@ the input.
 Types of padding:
 valid - no padding.
 same - pading to make the output the same size as the input size.
-""""
+"""
 
-from kreas.layers.convolutional import *
+from keras.layers.convolutional import *
+from keras.layers import Flatten
 
 model_valid = Sequential([
     Dense(16, activation='relu', input_shape=(20,20,3)),
