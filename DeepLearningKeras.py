@@ -290,3 +290,11 @@ model5 = Sequential([
 #---------------Part  3 - Backpropagation--------------
 #******************************************************
 
+""" Process of backpropagation
+1 Data is passed to the neural network and it makes a predoction.
+2 The loss is calculated.
+3 The optimization alorithm, f.eks. gradient decendt, is used to update the network to minimize the loss.
+    This is done by calculating the gradient of the loss with respect to the weights
+"""
+
+# Continue on video 28 Backproparagtion explained Part 2 - The mathematical notation

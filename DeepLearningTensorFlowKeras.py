@@ -41,9 +41,14 @@ model.fit(xTrain, yTrain, epochs = 3)
 valLoss, valAcc = model.evaluate(xTest, yTest)
 print(valLoss, valAcc)
 
+# Try to predict
+predictions = model.predict()
+
+"""
 # Save and load model
 model.save('predictMnist.model')
 oldModel = tf.keras.models.load_model('predictMnist.model')
 predictions = oldModel.predict(xTest)
 print('Predictions from old model:')
 print(predictions)
+"""
