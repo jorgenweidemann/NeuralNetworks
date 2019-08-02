@@ -1,4 +1,4 @@
-"""
+""" NOT FINISHED
 This file contains an attempt to make a neural network for use in a reinforcement learning project for NorgesGruppen.
 Disclamer: This is only an atempt and not exactly what will be implemented.
 """
@@ -6,19 +6,21 @@ Disclamer: This is only an atempt and not exactly what will be implemented.
 # Imports
 import keras
 import tensorflow
+tensorflow.logging.set_verbosity(tensorflow.logging.ERROR)
 import numpy
 import random
 
 print("keras version: ", keras.__version__)
 print("tensorflow: ", tensorflow.VERSION)
+print("numpy version: ", numpy.version.version)
 
 # Static variables
 AREAHEIGHT = 4
 AREAWIDTH = 4
 TRAININGBATCHSIZE = 10
-TRAININGEPOCHS = 20
+TRAININGEPOCHS = 10
 TRAININGVERBOSE = 2
-TRAININGINPUTS = 10
+TRAININGINPUTS = 400
 
 # Dependet variables
 
@@ -31,17 +33,18 @@ class NeuralNetwork():
 
     # Initial class set-up. Constructor.
     def __init__(self):
+        print(type(inputSize))
 
         # Create the neural network.
         self.__NN = keras.models.Sequential([
-            keras.layers.core.Dense(inputSize, input_dim=inputSize),
+            keras.layers.core.Dense(int(inputSize), input_dim=(int(inputSize))),
             keras.layers.core.Dense(inputSize),
-            keras.layers.core.Dense((inputSize + outputSize)/2),
-            keras.layers.core.Dense(outputSize, activation='softmax'),
+            keras.layers.core.Dense(int((inputSize + outputSize)/2)),
+            keras.layers.core.Dense(int(outputSize))
         ])
 
         # The neural network has to be compiled before use.
-        self.__NN.compile(keras.optimizers.Adam(lr=0.001)) # Can consider using epsilon and decal in the compilation.
+        self.__NN.compile(keras.optimizers.Adam(lr=0.001), loss='mse', metrics=['accuracy']) # Can consider using epsilon and decal in the compilation.
 
     # Method for training the neural network for large data existing datasets.
     def train(self, trainingInput, trainingOutput):
@@ -56,35 +59,48 @@ class NeuralNetwork():
         return self.__NN.predict(input, batch_size=None)
 
 
-# Test
+#*********************************
+#              Test
+#*********************************
 
 
 # Create trainingInput
+def createTrainingData(trainingInputs):
+    choices = [int(0),int(1)]
+    inp = []
+    for i in range(trainingInputs):
+        for r in range(inputSize):
+            inp.append(random.choice(choices))
+    inputData = numpy.reshape(inp, (trainingInputs, inputSize))
 
-choices = [int(0),int(1)]
-values = []
-for i in range(TRAININGINPUTS):
-    for r in range(inputSize):
-        values.append(random.choice(choices))
-inputForTraining = numpy.reshape(values, (TRAININGINPUTS, inputSize))
-print(inputForTraining)
-
-
-# Create trainingOutput
-
-values = []
-for i in range(TRAININGINPUTS):
-    for r in range(inputSize):
-        if inputForTraining[i][r] == 0:
-            values.append(1)
-        else:
-            values.append(0)
-outputForTraining = numpy.reshape(values, (TRAININGINPUTS, inputSize))
-print(outputForTraining)
+    # Create trainingOutput
+    out = []
+    for i in range(trainingInputs):
+        for r in range(inputSize):
+            if inputData[i][r] == 0:
+                out.append(1)
+            else:
+                out.append(0)
+    outputData = numpy.reshape(out, (trainingInputs, inputSize))
+    return inputData, outputData
 
 
-# Test the network
+# Finds the accuracy
+def findAccuracy(testSetSize):
+    inputForEvaluation, outputForEvaluation = createTrainingData(testSetSize)
+    accuracy = 0
+    for i in range(100):
+        prediction = network.predict(inputForEvaluation[i].reshape((1,-1)))
+        if outputForEvaluation[i][numpy.argmax(prediction)] == 1:
+            accuracy += 1
+    return accuracy / testSetSize
 
-network = NeuralNetwork()
+if __name__ == "__main__":
+    
+    network = NeuralNetwork()
 
-# network.train(inputForTraining, outputForTraining)
+    inputForTraining, outputForTraining = createTrainingData(TRAININGINPUTS)
+
+    network.train(inputForTraining, outputForTraining)
+    
+    print("Accuracy: ", findAccuracy(100))
