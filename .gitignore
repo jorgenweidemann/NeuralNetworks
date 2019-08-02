@@ -1,4 +1,4 @@
 # Filetypes
 
-.model
-.json
+*.model
+*.json
