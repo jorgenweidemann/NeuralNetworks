@@ -1,7 +1,11 @@
 """
 This file contains an attempt to make a neural network for use in a reinforcement learning project for NorgesGruppen.
-Disclamer: This is only an attempt and not exactly what will be implemented.
+The model is a simple binary not function.
 """
+
+#************************************
+#            Initial setup
+#************************************
 
 # Imports
 import keras
@@ -26,12 +30,16 @@ TRAININGEPOCHS = 10
 TRAININGVERBOSE = 2
 TRAININGINPUTS = 1_000
 SAVELOADTHRESHOLD = 0.95
-ALLWAYSTRAIN = True
+ALLWAYSTRAIN = False
 
 # Dependet variables
 inputSize = AREAHEIGHT * AREAWIDTH
 outputSize = AREAHEIGHT * AREAWIDTH # Will always be the same as inputSize
 
+
+#*******************************
+#            Classes
+#*******************************
 
 # Class for my neural network.
 class NeuralNetwork():
@@ -48,7 +56,7 @@ class NeuralNetwork():
         ])
 
         # The neural network has to be compiled before use.
-        self.__NN.compile(keras.optimizers.Adam(lr=0.001), loss='mse', metrics=['accuracy']) # Can consider using epsilon and decal in the compilation.
+        self.__NN.compile(keras.optimizers.Adam(lr=0.001), loss='mse') # Can consider using epsilon and decal in the compilation.
 
         self.__accuracy = 0
 
@@ -116,7 +124,7 @@ class NeuralNetwork():
         return inputData, outputData
     
     # Finds the accuracy
-    def findAccuracy(self, testSetSize):
+    def findAccuracy(self, testSetSize=100):
         inputForEvaluation, outputForEvaluation = self.createTrainingData(testSetSize)
         accuracy = 0
         for i in range(100):
@@ -138,6 +146,7 @@ class NeuralNetwork():
     # Method for loading the last model that was saved.
     def load(self):
         self.__NN = keras.models.load_model('NNForRL.model')
+        self.__accuracy = self.findAccuracy()
 
     
     # Getter for accuracy.
@@ -160,6 +169,6 @@ if __name__ == "__main__":
 
     prediction = network.predict(numpy.array([1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,0]).reshape(1,-1))
 
-    print("Predicted: ", prediction, " Expected: [3,3]")
+    print("Predicted: ", prediction, " Expected: [3 3]")
 
     network.save()
